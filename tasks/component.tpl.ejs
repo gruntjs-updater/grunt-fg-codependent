@@ -86,12 +86,12 @@ loadonater.process_css(resource);
 
 function return_callback_when_all_resources_loaded() {
 
+if ( loadonater.verify_all_resources_loaded() ) {
 if(typeof callback === 'undefined'){
 return;
+}else{
+  return callback();
 }
-
-if ( loadonater.verify_all_resources_loaded() ) {
-return callback();
 } else {
 setTimeout(function() {
 return_callback_when_all_resources_loaded();
@@ -248,7 +248,6 @@ return;
 };
 
 var {%- name %}_deps = {
-  "dependencies":{
     "scripts":[
       {%= _.map(deps.js, function(dep){
         return JSON.stringify( {
@@ -272,7 +271,6 @@ var {%- name %}_deps = {
       });
       }).join(',') %}
     ]
-  }
 }
 
 // Kick it all off.
