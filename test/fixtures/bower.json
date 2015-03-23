@@ -1,0 +1,41 @@
+{
+  "name": "dummy",
+  "version": "0.1.0",
+  "dependencies": {
+    "html5shiv": "~3.7.2",
+    "animate.css": "*",
+    "respond": "~1.4.2",
+    "angular": "1.2.15",
+    "json3": "~3.2.6",
+    "es5-shim": ">=3.4.0",
+    "lodash": "~2.4.1",
+    "jquery": "~1.11.0",
+    "jquery-ui": "~1.11.0",
+    "angular-ui-sortable": "~0.12.8",
+    "bootstrap": "~3.2.0",
+    "restangular": "~1.4.0",
+    "angular-resource": "1.2.15",
+    "angular-cookies": "1.2.15",
+    "angular-sanitize": "1.2.15",
+    "moment": "~2.7.0",
+    "angular-loading-bar": "~0.5.0",
+    "font-awesome-stylus": "*",
+    "angular-ui-bootstrap-bower": "~0.11.0",
+    "angular-ui-router": "~0.2.10",
+    "angular-ui-utils": "~0.1.1",
+    "angular-animate": "~1.2.23",
+    "quick-ngrepeat": "*",
+    "vminpoly": "*",
+    "angular-bootstrap-jbruni": "https://github.com/duanearnett/bootstrap-bower-jbruni.git#master",
+    "angularjs-dropdown-multiselect": "https://github.com/duanearnett/angularjs-dropdown-multiselect.git#master"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.2.15",
+    "angular-scenario": "1.2.15"
+  },
+  "resolutions": {
+    "angular": "1.2.15",
+    "jquery": "~1.11.0",
+    "moment": "~2.7.0"
+  }
+}

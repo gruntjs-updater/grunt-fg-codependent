@@ -49,6 +49,18 @@ Default value: `'.'`
 
 A string value that is used to do something else with whatever else.
 
+#### options.bower_path
+Type: `String`
+Default value: `'./bower.json'`
+
+A string value that is used to tell componentize where the bower.json file is.
+
+#### options.deps
+Type: `Object`
+Default value: `null`
+
+Pass in a JSON object that represents the dependencies how you see fit.
+
 ### Usage Examples
 
 #### Default Options

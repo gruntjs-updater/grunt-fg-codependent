@@ -37,5 +37,12 @@
   },
   "keywords": [
     "gruntplugin"
-  ]
+  ],
+  "dependencies": {
+    "colors": "^1.0.3",
+    "lodash": "^3.5.0",
+    "path": "^0.11.14",
+    "jju": "^1.0.4",
+    "tosource": "^0.1.1"
+  }
 }
