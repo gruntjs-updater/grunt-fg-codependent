@@ -1,23 +1,23 @@
 {
-  "name": "grunt-componentize",
-  "description": "The best Grunt plugin ever.",
+  "name": "grunt-fg-codependent",
+  "description": "The super best Grunt plugin ever.",
   "version": "0.1.0",
-  "homepage": "https://github.com/fortyau/grunt-componentize",
+  "homepage": "https://github.com/fortyau/grunt-fg-codependent",
   "author": {
     "name": "duane",
     "email": "duane@fortyau.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/fortyau/grunt-componentize.git"
+    "url": "git://github.com/fortyau/grunt-fg-codependent.git"
   },
   "bugs": {
-    "url": "https://github.com/fortyau/grunt-componentize/issues"
+    "url": "https://github.com/fortyau/grunt-fg-codependent/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/fortyau/grunt-componentize/blob/master/LICENSE-MIT"
+      "url": "https://github.com/fortyau/grunt-fg-codependent/blob/master/LICENSE-MIT"
     }
   ],
   "engines": {
