@@ -29,6 +29,7 @@ var HOST_URL = 'http://localhost:9000';
 var JS_PATH = '/scripts/vendor';
 var CSS_PATH = '/styles/vendor';
 var ASSET_TYPES = ['js', 'css'];
+var DEFAULT_DEST_PATH = 'dist/componentize.js'
 var DICTIONARY = '';
 var SERIALIZERS = {
     'jju': function jjuSerializer(obj, serializerOptions) {
@@ -113,6 +114,7 @@ module.exports = function(grunt) {
     /** The component object that we are creating **/
     var comp = this.options({
         name: 'fg_component',
+        dest_path: DEFAULT_DEST_PATH,
         template: defaultTemplate,
         host_url: HOST_URL,
         js_path: JS_PATH,
@@ -335,7 +337,7 @@ module.exports = function(grunt) {
       delimiters: comp.delimiters
     });
 
-    grunt.file.write(path.join(__dirname, '../test/tmp/component.js'), result);
+    grunt.file.write(path.join(__dirname, comp.dest_path), result);
 
     console.info('Woot!'.green);
     if(comp.deps.unknown && comp.deps.unknown.length > 0){
