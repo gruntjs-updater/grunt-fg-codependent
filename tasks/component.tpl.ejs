@@ -1,4 +1,6 @@
-var loadonater = {
+var {%- app_name %} = {}
+
+{%- app_name %}.loadonater = {
 
 
 // Create a object to save off some data.
@@ -246,7 +248,7 @@ return;
 
 };
 
-var {%- name %}_deps = {
+{%- app_name %}.dependencies = {
     "scripts":[
       {%= _.map(deps.js, function(dep){
         return JSON.stringify( {
@@ -277,4 +279,4 @@ var {%- name %}_deps = {
 
 
 // Kick it all off.
-loadonater.process_project_dependencies({%- name %}_deps);
+{%- app_name %}.loadonater.process_project_dependencies({%- app_name %}.dependencies);
