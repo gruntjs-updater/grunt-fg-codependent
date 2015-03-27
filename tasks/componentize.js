@@ -8,8 +8,6 @@
 
 'use strict';
 
-// This is dumb
-var DEV_MODE = true;
 
 // DEPENDENCIES ========================================================================================================
 var colors = require('colors');
@@ -23,13 +21,13 @@ var execSync = require('child_process').execSync;
 // CONSTANTS/DEFAULTS ==================================================================================================
 var MODULE_NAME = 'componentize';
 var TEMPLATE_PATH = path.join(__dirname, 'component.tpl.ejs');
-var BOWER_PATH = !DEV_MODE ? path.resolve('bower.json') : path.join(__dirname, '../test/fixtures/bower.json');
+var BOWER_PATH = path.resolve('bower.json');
 var BOWER_INFO_CMD = 'bower info {name}#{ver}';
 var HOST_URL = 'http://localhost:9000';
 var JS_PATH = '/scripts/vendor';
 var CSS_PATH = '/styles/vendor';
 var ASSET_TYPES = ['js', 'css'];
-var DEFAULT_DEST_PATH = 'dist/componentize.js'
+var DEFAULT_DEST = 'dist/componentize.js';
 var DICTIONARY = '';
 var SERIALIZERS = {
     'jju': function jjuSerializer(obj, serializerOptions) {
@@ -103,8 +101,6 @@ module.exports = function(grunt) {
 
     console.log('**Beginning the componentize task!**'.black.bold.bgBlue);
 
-
-
     // LOCALS FOR THE TASK ---------------------------------------------------------------------------------------------
     // Get any options for this Grunt task
     console.info('Gathering configuration > '.bold.blue);
@@ -114,7 +110,7 @@ module.exports = function(grunt) {
     /** The component object that we are creating **/
     var comp = this.options({
         name: 'fg_component',
-        dest_path: DEFAULT_DEST_PATH,
+        dest: DEFAULT_DEST,
         template: defaultTemplate,
         host_url: HOST_URL,
         js_path: JS_PATH,
@@ -132,6 +128,8 @@ module.exports = function(grunt) {
             unknown: []
         }
     });
+
+    comp.name = comp.name.replace('-', '_');
 
     var transformData = function dataTransformer(data) {
       return _.map(data, function (value, name) {
@@ -337,7 +335,7 @@ module.exports = function(grunt) {
       delimiters: comp.delimiters
     });
 
-    grunt.file.write(path.join(__dirname, comp.dest_path), result);
+    grunt.file.write(path.join(comp.dest), result);
 
     console.info('Woot!'.green);
     if(comp.deps.unknown && comp.deps.unknown.length > 0){
