@@ -244,7 +244,6 @@ document.getElementsByTagName("head")[0].appendChild(dom_element);
 return;
 }
 
-
 };
 
 var {%- name %}_deps = {
@@ -274,19 +273,8 @@ var {%- name %}_deps = {
 }
 
 
-var {%- name %} = {};
-
-{%- name %}.injector = {
-template: '<div ng-app="{%- app_name %}" id="ng-app">{{main.html}}</div>',
-
-run: function(){
-    // Find the script tag on this page
-    var injection_script_tag = $("script#{%- name %}Injector");
-    // Add the template before this point
-    $({%- name %}.injector.template).insertBefore(injection_script_tag)
-  }
-};
+//{{init_script}}
 
 
 // Kick it all off.
-loadonater.process_project_dependencies({%- name %}_deps, {%- name %}.injector.run);
+loadonater.process_project_dependencies({%- name %}_deps);
