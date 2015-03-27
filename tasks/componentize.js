@@ -189,7 +189,7 @@ module.exports = function(grunt) {
         },
         getInfoFromBower: function(){
             this.bower_info = getBowerInfo(this.name, this.version);
-            if(this.version === '*' && this.bower_info.hasOwnProperty('latest')){
+            if(this.version === '*' && this.bower_info && this.bower_info.hasOwnProperty('latest')){
                 this.bower_info = this.bower_info.latest;
             }
             return this.bower_info;
@@ -218,7 +218,7 @@ module.exports = function(grunt) {
     console.info('  > Setting the name of the component object'.cyan);
     comp.name = bower.name;
 
-    if(bower.hasOwnProperty('dependencies')){
+    if(bower && bower.hasOwnProperty('dependencies')){
         bower_deps = bower.dependencies;
         console.info('  > Found '.green + _.size(bower_deps).toString().green + ' dependency(ies) from bower.json'.green);
     }else{
@@ -266,7 +266,7 @@ module.exports = function(grunt) {
 
             // Success!
             if(dep.getInfoFromBower()){
-                if(!dep.bower_info.hasOwnProperty('main')){
+                if(dep.bower_info && !dep.bower_info.hasOwnProperty('main')){
                     console.warn('      ^ Could not determine the dependency type for '.grey + name.red.bold + ' (no main attribute)!'.grey);
                     return;
                 }
