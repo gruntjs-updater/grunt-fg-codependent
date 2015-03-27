@@ -21,7 +21,7 @@ var execSync = require('child_process').execSync;
 // CONSTANTS/DEFAULTS ==================================================================================================
 var MODULE_NAME = 'componentize';
 var TEMPLATE_PATH = path.join(__dirname, 'component.tpl.ejs');
-var BOWER_PATH = path.resolve('bower.json');
+var BOWER_PATH = 'bower.json';
 var BOWER_INFO_CMD = 'bower info {name}#{ver}';
 var HOST_URL = 'http://localhost:9000';
 var JS_PATH = '/scripts/vendor';
@@ -212,7 +212,7 @@ module.exports = function(grunt) {
 
     // Check if bower actually has any dependencies --------------------------------------------------------------------
     console.info('  > Reading the configured dependencies and bower.json file'.cyan);
-    var bower = require(comp.bower_path);
+    var bower = require(path.resolve(comp.bower_path));
     var bower_deps = {};
 
     console.info('  > Setting the name of the component object'.cyan);
