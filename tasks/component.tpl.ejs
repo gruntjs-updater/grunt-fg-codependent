@@ -49,7 +49,7 @@ return resource_object;
 // We manually add the data to the loadonater_resource_library object as we are loading them.
 // This returns true or false if we have recorded a resource loaded.
 is_resource_being_loaded: function(type, name) {
-injected_resource = loadonater.get_resource_object(type, name)
+injected_resource = {%- app_name %}.loadonater.get_resource_object(type, name)
 
 if (injected_resource) {
 return true;
@@ -62,7 +62,7 @@ return false;
 // Take a dependency_group, this will be regular old dependencies or dev dependencies,
 // loop through them, and inject the project_resources into the page
 process_project_dependencies: function(dependencies, callback) {
-loadonater.create_resource_library();
+{%- app_name %}.loadonater.create_resource_library();
 
 // These dependency will be scripts, or stylesheets
 for (var dependency_type in dependencies) {
@@ -75,11 +75,11 @@ for (var library in library_set) {
 var resource = library_set[library]
 
 if (dependency_type == 'scripts') {
-loadonater.process_js(resource);
+{%- app_name %}.loadonater.process_js(resource);
 }
 
 if (dependency_type == 'stylesheets') {
-loadonater.process_css(resource);
+{%- app_name %}.loadonater.process_css(resource);
 }
 
 }
@@ -88,7 +88,7 @@ loadonater.process_css(resource);
 
 function return_callback_when_all_resources_loaded() {
 
-if ( loadonater.verify_all_resources_loaded() ) {
+if ( {%- app_name %}.loadonater.verify_all_resources_loaded() ) {
 if(typeof callback === 'undefined'){
 return;
 }else{
@@ -122,14 +122,14 @@ return true;
 
 process_js: function(resource) {
 resource_present = eval(resource.verify_presence)
-resource_loading = loadonater.is_resource_being_loaded("scripts", resource.name)
+resource_loading = {%- app_name %}.loadonater.is_resource_being_loaded("scripts", resource.name)
 
 // If a resource is present in the dom, We will add it to loadonater_resource_library
 // If a second application is running lodonater and requests a similar resource, this resource should only be added once.
 if (resource_present) {
-if (loadonater.get_resource_object("scripts", resource.name) == null) {
+if ({%- app_name %}.loadonater.get_resource_object("scripts", resource.name) == null) {
 resource_version = eval(resource.verify_version);
-loadonater.add_new_resource_to_library("scripts", resource.name, resource_version, true);
+{%- app_name %}.loadonater.add_new_resource_to_library("scripts", resource.name, resource_version, true);
 }
 }
 
@@ -138,7 +138,7 @@ loadonater.load_now_or_later(resource)
 } else {
 // Check for a mis match in version. We will have a pre-loaded resource
 // OR another instance of loadonater is requesting a similar resource to be loaded.
-var pre_existing_resource = loadonater.get_resource_object("scripts", resource.name);
+var pre_existing_resource = {%- app_name %}.loadonater.get_resource_object("scripts", resource.name);
 if (pre_existing_resource.version !== resource.version){
 console.log ("Version Mismatch: Application requires version "+ resource.version +" of "+ resource.name +", version "+ pre_existing_resource.version +" loaded already!");
 }
@@ -151,11 +151,11 @@ return;
 // Make a decision on when to inject the JS based on if it has prerequisites.
 load_now_or_later: function(resource) {
 if (resource.prerequisite != undefined) {
-var our_prerequisite = loadonater.get_resource_object("scripts", resource.prerequisite);
+var our_prerequisite = {%- app_name %}.loadonater.get_resource_object("scripts", resource.prerequisite);
 
 function wait_until_prerequisite_loaded() {
 if (our_prerequisite.loaded) {
-loadonater.inject_js(resource);
+{%- app_name %}.loadonater.inject_js(resource);
 } else {
 setTimeout(function() {
 wait_until_prerequisite_loaded();
@@ -165,7 +165,7 @@ wait_until_prerequisite_loaded();
 
 wait_until_prerequisite_loaded();
 } else {
-loadonater.inject_js(resource);
+{%- app_name %}.loadonater.inject_js(resource);
 }
 
 return;
@@ -174,7 +174,7 @@ return;
 
 inject_js: function(resource) {
 // Document that we are injecting the resource. make it not loaded.
-var our_object = loadonater.add_new_resource_to_library("scripts", resource.name, resource.version, false)
+var our_object = {%- app_name %}.loadonater.add_new_resource_to_library("scripts", resource.name, resource.version, false)
 
 var head= document.getElementsByTagName('head')[0];
 var script= document.createElement('script');
@@ -191,15 +191,15 @@ return;
 process_css: function(resource) {
 var we_need_to_load_this_resource = true;
 
-resource_present = loadonater.css_resource_in_dom(resource.name);
-resource_loading = loadonater.is_resource_being_loaded("stylesheets", resource.name);
+resource_present = {%- app_name %}.loadonater.css_resource_in_dom(resource.name);
+resource_loading = {%- app_name %}.loadonater.is_resource_being_loaded("stylesheets", resource.name);
 
 if (resource_present || resource_loading) {
 we_need_to_load_this_resource = false;
 }
 
 if (we_need_to_load_this_resource) {
-loadonater.inject_css(resource);
+{%- app_name %}.loadonater.inject_css(resource);
 }
 
 return;
@@ -218,7 +218,7 @@ return return_array;
 
 
 css_resource_in_dom: function(resource_name) {
-var css_resources = loadonater.get_all_css_file_names();
+var css_resources = {%- app_name %}.loadonater.get_all_css_file_names();
 
 for(var i = 0; i < css_resources.length; i++) {
 if(css_resources[i].indexOf(resource_name) != -1 ) {
@@ -232,7 +232,7 @@ return false;
 
 
 inject_css: function(resource){
-loadonater.add_new_resource_to_library("stylesheets", resource.name, resource.version, true)
+{%- app_name %}.loadonater.add_new_resource_to_library("stylesheets", resource.name, resource.version, true)
 
 var dom_element = document.createElement("link")
 dom_element.setAttribute("rel", "stylesheet")
