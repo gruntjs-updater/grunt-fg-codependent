@@ -109,6 +109,7 @@ module.exports = function(grunt) {
 
     /** The component object that we are creating **/
     var comp = this.options({
+        app_name: 'fg_component',
         name: 'fg_component',
         dest: DEFAULT_DEST,
         template: defaultTemplate,

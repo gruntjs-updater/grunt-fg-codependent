@@ -134,7 +134,7 @@ resource_version = eval(resource.verify_version);
 }
 
 if (!resource_present && !resource_loading) {
-loadonater.load_now_or_later(resource)
+{%- app_name %}.loadonater.load_now_or_later(resource)
 } else {
 // Check for a mis match in version. We will have a pre-loaded resource
 // OR another instance of loadonater is requesting a similar resource to be loaded.
