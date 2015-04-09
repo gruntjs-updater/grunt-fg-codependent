@@ -221,7 +221,7 @@ css_resource_in_dom: function(resource_name) {
 var css_resources = {%- app_name %}.loadonater.get_all_css_file_names();
 
 for(var i = 0; i < css_resources.length; i++) {
-if(css_resources[i].indexOf(resource_name) != -1 ) {
+if(css_resources[i] && css_resources[i].indexOf(resource_name) != -1 ) {
 // console.log ("css resource " + resource_name + " found in dom")
 return true;
 }

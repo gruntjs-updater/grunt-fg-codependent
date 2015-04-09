@@ -10,7 +10,10 @@
 
 
 // DEPENDENCIES ========================================================================================================
+var mkdirp = require('mkdirp');
+var readdirp = require('readdirp');
 var colors = require('colors');
+var fs = require('fs-extra');
 var path = require('path');
 var _ = require('lodash');
 var jju = require('jju');
@@ -66,7 +69,7 @@ var getBowerInfo = function(pkg_name, pkg_ver){
         }
     }
     catch (err) {
-        console.warn('      ^ Could not fetch info for '.grey + pkg_name.red.bold);
+        console.warn('      ^ Err! Could not fetch info for '.grey + pkg_name.red.bold);
     }
 
     return pkg_info;
@@ -177,7 +180,7 @@ module.exports = function(grunt) {
         },
         getVersion: function(){
             if(!this.version){
-                if(this.bower_info.version){
+                if(this.bower_info && this.bower_info.version){
                     this.version = this.bower_info.version;
                 }else{
                     console.warn('  ! Could not determine version for '.red + this.name.red.bold);
@@ -202,8 +205,12 @@ module.exports = function(grunt) {
                 console.info('     * ' + 'Determined src' + ' of '.grey + this.src.toString().bold.grey);
             }
             if(!this.version){
-                this.version = this.bower_info.version;
-                console.info('     * ' + 'Determined version' + ' of '.grey + this.src.toString().bold.grey);
+                if(this.bower_info && this.bower_info.version) {
+                    this.version = this.bower_info.version;
+                    console.info('     * ' + 'Determined version' + ' of '.grey + this.src.toString().bold.grey);
+                }else{
+                    console.info('     * ' + 'Couldn\'t determine version' + ' of '.grey + this.src.toString().bold.grey);
+                }
             }
         }
     }; //---------------------------------------------------------------------------------------------------------------
@@ -267,6 +274,7 @@ module.exports = function(grunt) {
 
             // Success!
             if(dep.getInfoFromBower()){
+
                 if(dep.bower_info && !dep.bower_info.hasOwnProperty('main')){
                     console.warn('      ^ Could not determine the dependency type for '.grey + name.red.bold + ' (no main attribute)!'.grey);
                     return;
@@ -292,12 +300,14 @@ module.exports = function(grunt) {
                 if(dep.filename && dep.filename.indexOf('.') >= 0){
                     var dep_type = dep.filename.split('.').pop().toLowerCase().trim();
                     dep.type = dep_type;
-                    comp.deps[dep_type].push(dep);
                     console.info('      - Resolved '.green + name.bold.green + ' as '.grey + dep_type.toUpperCase().bold.green + ' from Bower'.grey);
-
+                    comp.deps[dep_type].push(dep);
                 }else{
-                    comp.deps['unknown'].push(dep);
                     console.warn('      ^ Could not determine the dependency type for '.grey + name.red.bold);
+                    if(!comp.deps['unknown']){
+                        comp.deps['unknown'] = [];
+                    }
+                    comp.deps['unknown'].push(dep);
                 }
             }
 
@@ -306,20 +316,18 @@ module.exports = function(grunt) {
     }//-----------------------------------------------------------------------------------------------------------------
 
 
-
     console.info('  > Checking dependency validity'.cyan);
+
     _.forEach(comp.deps, function(dep, dep_type){
         if(dep_type==='unknown'){
             return;
         }
 
         _.forEach(dep, function(d, i){
-
             if(d.isValid()){
             }else{
                 comp.deps[dep_type][i].fulfillRequirements();
             }
-
         });
 
         console.info('All '.green + dep_type.toUpperCase().green.bold + ' dependencies are done!'.green);
@@ -327,7 +335,7 @@ module.exports = function(grunt) {
 
 
     // Write the file to where we need to! -----------------------------------------------------------------------------
-    console.dir(comp);
+
     var result = grunt.template.process(comp.template, {
       data: _.extend({}, comp, {
           moduleName: comp.name,
@@ -338,7 +346,66 @@ module.exports = function(grunt) {
 
     grunt.file.write(path.join(comp.dest), result);
 
+    console.info('Moving files'.yellow);
+
+      // Create the vendor directories for the libraries
+      mkdirp(path.resolve('dist' + comp['css_path']))
+      mkdirp(path.resolve('dist' + comp['js_path']))
+
+      var walk = function(dir) {
+          var results = []
+          var list = fs.readdirSync(dir)
+          list.forEach(function(file) {
+              file = dir + '/' + file
+              var stat = fs.statSync(file)
+              if (stat && stat.isDirectory()) results = results.concat(walk(file))
+              else results.push(file)
+          })
+          return results
+      }
+
+      var wiredep = require('wiredep')({ src: 'app/index.jade' });
+
+      console.log('wiredeop');
+      console.dir(wiredep.packages.angular);
+      console.dir(wiredep.packages);
+
+      _.forEach(comp.deps, function(deps, key){
+
+          console.log(key);
+          var dep_type = key;
+
+          _.forEach(deps, function(dep) {
+              //console.dir(dep);
+              //console.log(path.join(__dirname, 'bower_components/' + dep.name + '/' + dep.bower_info.main));
+              //console.log(path.join(__dirname, JS_PATH + '' + dep.filename));
+
+              var file_path = '';
+              var filename = dep.filename;
+              var main_path_components = [];
+
+
+              if (dep.hasOwnProperty('bower_info') && dep.bower_info.hasOwnProperty('main')) {
+                  file_path = wiredep.packages[dep.bower_info.name].main[0]
+              } else if (dep.name) {
+                  // search for the file
+                  file_path ='app/bower_components/' + dep.name + '/' + filename;
+              }
+
+              console.log('COPYING!!');
+              console.log(dep.filename);
+              console.log(path.resolve(file_path));
+              console.log(path.resolve('dist' + comp[dep_type + '_path'] + '/' + filename));
+
+              if (file_path !== '') {
+                  fs.copySync(path.resolve(file_path), 'dist' + comp[dep_type + '_path'] + '/' + filename);
+                  //fs.createReadStream( path.resolve(file_path) ).pipe( fs.createWriteStream(path.resolve('dist' + comp[dep_type + '_path'] + '/' + filename)) );
+              }
+          });
+      });
+
     console.info('Woot!'.green);
+
     if(comp.deps.unknown && comp.deps.unknown.length > 0){
         console.warn('We could not resolve '.red.bold + comp.deps.unknown.length.toString().red.bold + ' dependencies!'.red.bold);
     }
