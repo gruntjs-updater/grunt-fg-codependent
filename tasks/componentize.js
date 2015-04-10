@@ -324,8 +324,9 @@ module.exports = function(grunt) {
         }
 
         _.forEach(dep, function(d, i){
-            if(d.isValid()){
-            }else{
+            console.dir(d)
+            if(d.hasOwnProperty('isValid') && d.isValid()){
+            }else if(comp.deps[dep_type][i].hasOwnProperty('fulfillRequirements')){
                 comp.deps[dep_type][i].fulfillRequirements();
             }
         });
@@ -366,16 +367,12 @@ module.exports = function(grunt) {
 
       var wiredep = require('wiredep')({ src: 'app/index.jade' });
 
-      console.log('wiredeop');
-      console.dir(wiredep.packages.angular);
-      console.dir(wiredep.packages);
-
       _.forEach(comp.deps, function(deps, key){
 
-          console.log(key);
           var dep_type = key;
 
           _.forEach(deps, function(dep) {
+
               //console.dir(dep);
               //console.log(path.join(__dirname, 'bower_components/' + dep.name + '/' + dep.bower_info.main));
               //console.log(path.join(__dirname, JS_PATH + '' + dep.filename));
@@ -389,17 +386,16 @@ module.exports = function(grunt) {
                   file_path = wiredep.packages[dep.bower_info.name].main[0]
               } else if (dep.name) {
                   // search for the file
-                  file_path ='app/bower_components/' + dep.name + '/' + filename;
-              }
 
-              console.log('COPYING!!');
-              console.log(dep.filename);
-              console.log(path.resolve(file_path));
-              console.log(path.resolve('dist' + comp[dep_type + '_path'] + '/' + filename));
+                  if (dep.ignoreBower) {
+                      file_path = dep.filepath + dep.filename;
+                  }else {
+                      file_path = 'app/bower_components/' + dep.name + '/' + filename;
+                  }
+              }
 
               if (file_path !== '') {
                   fs.copySync(path.resolve(file_path), 'dist' + comp[dep_type + '_path'] + '/' + filename);
-                  //fs.createReadStream( path.resolve(file_path) ).pipe( fs.createWriteStream(path.resolve('dist' + comp[dep_type + '_path'] + '/' + filename)) );
               }
           });
       });
